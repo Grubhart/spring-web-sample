@@ -13,6 +13,11 @@ pipeline {
                 checkout scm
             }
         }
+        stage("Build code") {
+                    steps {
+                        sh("./gradlew clean jar")
+                    }
+                }
         stage("Build image") {
             steps {
                 script {
