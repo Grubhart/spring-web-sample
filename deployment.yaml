@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websample
+  labels:
+    app: websample
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: websample
+  template:
+    metadata:
+      labels:
+        app: websample
+    spec:
+      containers:
+        - name: websample
+          image: gcr.io/testci20200723/websample:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: websample
+  labels:
+    app: websample
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: websample
+  type: LoadBalancer
