@@ -4,8 +4,8 @@ pipeline {
         PROJECT_ID = 'produccion'
         CLUSTER_NAME = 'deployment'
         LOCATION = 'us-central1-b'
-        CREDENTIALS_ID = 'testCI20200723'
-        SERVICE_ACCOUNT = 'jenkins-service-account'
+        CREDENTIALS_ID = 'jenkinsgcpsecret'
+        SERVICE_ACCOUNT = 'GKEServiceAccount'
     }
     stages {
         stage("Checkout code") {
@@ -41,7 +41,7 @@ pipeline {
         stage("Push image") {
                     steps {
                         script {
-                            withCredentials([file(credentialsId: 'jenkins-service-account', variable: 'GC_key')]) {
+                            withCredentials([file(credentialsId: 'jenkinsgcpsecret', variable: 'GC_key')]) {
                                                 sh("gcloud auth activate-service-account --key-file='${GC_key}'")
                                                 sh('gcloud auth configure-docker')
                                                 sh("docker push gcr.io/'${env.PROJECT_ID}'/websample:'${env.BUILD_ID}'")
