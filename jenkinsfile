@@ -5,7 +5,6 @@ pipeline {
         CLUSTER_NAME = 'deployment'
         LOCATION = 'us-central1-b'
         CREDENTIALS_ID = 'testCI20200723'
-        sonar.projectKey=my:project
         SERVICE_ACCOUNT = 'jenkins-service-account'
     }
     stages {
