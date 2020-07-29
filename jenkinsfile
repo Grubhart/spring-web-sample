@@ -43,5 +43,19 @@ pipeline {
                         }
                     }
                 }
+        stage('Wait for Approval') {
+                     steps{
+                       timeout(time:30, unit:'SECONDS') {
+                          input message:'Approve deployment?', submitter: 'sre-approvers'
+                       }
+                     }
+                }
+                stage('Deploy to GKE PROD') {
+                    steps{
+                        sh("sed -i 's/websample:latest/websample:${env.BUILD_ID}/g' deployment.yaml")
+                        sh('cat deployment.yaml')
+                        step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                    }
+                }
     }
 }
