@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PROJECT_ID = 'produccion'
+        PROJECT_ID = 'produccion-ucic'
         CLUSTER_NAME = 'deployment'
         LOCATION = 'us-central1-b'
         CREDENTIALS_ID = 'jenkinsgcpsecret'
@@ -34,8 +34,8 @@ pipeline {
         stage("Build image") {
                     steps {
                         script {
-                             myapp = docker.build("gcr.io/produccion/websample:'${env.BUILD_ID}'")
-                             sh("docker tag gcr.io/produccion/websample:'${env.BUILD_ID}' gcr.io/testci20200723/websample:latest")
+                             myapp = docker.build("gcr.io/produccion-ucic/websample:'${env.BUILD_ID}'")
+                             sh("docker tag gcr.io/produccion/websample:'${env.BUILD_ID}' gcr.io/produccion-ucic/websample:latest")
                         }
                     }
                 }
