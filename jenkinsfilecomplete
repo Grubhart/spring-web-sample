@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+    environment {
+        PROJECT_ID = 'testci20200723'
+        CLUSTER_NAME = 'deployment'
+        LOCATION = 'us-central1-b'
+        CREDENTIALS_ID = 'testCI20200723'
+        SERVICE_ACCOUNT = 'jenkins-service-account'
+    }
+    stages {
+        stage("Checkout code") {
+            steps {
+                checkout scm
+            }
+        }
+        stage("Build code") {
+                    steps {
+                        sh("./gradlew clean bootjar")
+                    }
+                }
+        stage("Build image") {
+            steps {
+                script {
+                     myapp = docker.build("gcr.io/testci20200723/websample:'${env.BUILD_ID}'")
+                     sh("docker tag gcr.io/testci20200723/websample:'${env.BUILD_ID}' gcr.io/testci20200723/websample:latest")
+                }
+            }
+        }
+        stage("Push image") {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: 'jenkins-service-account', variable: 'GC_key')]) {
+                                        sh("gcloud auth activate-service-account --key-file='${GC_key}'")
+                                        sh('gcloud auth configure-docker')
+                                        sh("docker push gcr.io/'${env.PROJECT_ID}'/websample:'${env.BUILD_ID}'")
+                                        sh("docker push gcr.io/'${env.PROJECT_ID}'/websample:latest")
+                    }
+                }
+            }
+        }
+        stage('Wait for SRE Approval') {
+             steps{
+               timeout(time:30, unit:'SECONDS') {
+                  input message:'Approve deployment?', submitter: 'sre-approvers'
+               }
+             }
+        }
+        stage('Deploy to GKE PROD') {
+            steps{
+                sh("sed -i 's/websample:latest/websample:${env.BUILD_ID}/g' deployment.yaml")
+                sh('cat deployment.yaml')
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+            }
+        }
+    }
+}
