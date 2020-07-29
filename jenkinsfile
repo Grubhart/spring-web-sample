@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PROJECT_ID = 'testci20200723'
+        PROJECT_ID = 'produccion'
         CLUSTER_NAME = 'deployment'
         LOCATION = 'us-central1-b'
         CREDENTIALS_ID = 'testCI20200723'
@@ -33,8 +33,8 @@ pipeline {
         stage("Build image") {
                     steps {
                         script {
-                             myapp = docker.build("gcr.io/testci20200723/websample:'${env.BUILD_ID}'")
-                             sh("docker tag gcr.io/testci20200723/websample:'${env.BUILD_ID}' gcr.io/testci20200723/websample:latest")
+                             myapp = docker.build("gcr.io/produccion/websample:'${env.BUILD_ID}'")
+                             sh("docker tag gcr.io/produccion/websample:'${env.BUILD_ID}' gcr.io/testci20200723/websample:latest")
                         }
                     }
                 }

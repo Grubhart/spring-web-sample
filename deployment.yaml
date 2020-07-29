@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: websample
-          image: gcr.io/testci20200723/websample:latest
+          image: gcr.io/produccion/websample:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
