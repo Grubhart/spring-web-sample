@@ -15,7 +15,7 @@ pipeline {
         }
         stage("Build code") {
                     steps {
-                        sh("./gradlew clean jar")
+                        sh("./gradlew clean bootjar")
                     }
                 }
         stage("Build image") {
