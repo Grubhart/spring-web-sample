@@ -8,10 +8,15 @@ pipeline {
         SERVICE_ACCOUNT = 'jenkins-service-account'
     }
     stages {
-        stage("shell script") {
-            steps {
-                sh("whoami")
-            }
-        }
+        stage("Checkout code") {
+                    steps {
+                        checkout scm
+                    }
+                }
+                stage("Build code") {
+                            steps {
+                                sh("./gradlew clean bootjar")
+                            }
+                        }
     }
 }
