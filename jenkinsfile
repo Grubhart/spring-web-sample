@@ -5,6 +5,7 @@ pipeline {
         CLUSTER_NAME = 'deployment'
         LOCATION = 'us-central1-b'
         CREDENTIALS_ID = 'testCI20200723'
+        sonar.projectKey=my:project
         SERVICE_ACCOUNT = 'jenkins-service-account'
     }
     stages {
@@ -26,16 +27,6 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube analysis') {
-            steps {
-                script{
-                    def scannerHome = tool name: 'sonar_scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation';
-                        withSonarQubeEnv('sonar_scanner') {
-                          sh "${scannerHome}/bin/sonar-scanner"
-                        }
-                }
-            }
-         }
         stage("Push image") {
             steps {
                 script {
