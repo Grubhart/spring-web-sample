@@ -16,8 +16,8 @@ pipeline {
         stage("Build image") {
             steps {
                 script {
-                     myapp = docker.build("gcr.io/testci20200723/hellotest:'${env.BUILD_ID}'")
-                     sh("docker tag gcr.io/testci20200723/hellotest:'${env.BUILD_ID}' gcr.io/testci20200723/hellotest:latest")
+                     myapp = docker.build("gcr.io/testci20200723/websample:'${env.BUILD_ID}'")
+                     sh("docker tag gcr.io/testci20200723/websample:'${env.BUILD_ID}' gcr.io/testci20200723/websample:latest")
                 }
             }
         }
@@ -27,8 +27,8 @@ pipeline {
                     withCredentials([file(credentialsId: 'jenkins-service-account', variable: 'GC_key')]) {
                                         sh("gcloud auth activate-service-account --key-file='${GC_key}'")
                                         sh('gcloud auth configure-docker')
-                                        sh("docker push gcr.io/'${env.PROJECT_ID}'/hellotest:'${env.BUILD_ID}'")
-                                        sh("docker push gcr.io/'${env.PROJECT_ID}'/hellotest:latest")
+                                        sh("docker push gcr.io/'${env.PROJECT_ID}'/websample:'${env.BUILD_ID}'")
+                                        sh("docker push gcr.io/'${env.PROJECT_ID}'/websample:latest")
                     }
                 }
             }
@@ -42,7 +42,7 @@ pipeline {
         }
         stage('Deploy to GKE PROD') {
             steps{
-                sh("sed -i 's/hellotest:latest/hellotest:${env.BUILD_ID}/g' deployment.yaml")
+                sh("sed -i 's/websample:latest/websample:${env.BUILD_ID}/g' deployment.yaml")
                 sh('cat deployment.yaml')
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
