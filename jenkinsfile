@@ -13,10 +13,15 @@ pipeline {
                         checkout scm
                     }
                 }
-                stage("Build code") {
+        stage("test code") {
                             steps {
-                                sh("./gradlew clean bootjar")
+                                sh("./gradlew clean test")
                             }
                         }
+        stage("Build code") {
+                    steps {
+                        sh("./gradlew clean bootjar")
+                    }
+                }
     }
 }
